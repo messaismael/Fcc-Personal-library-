@@ -49,9 +49,8 @@ suite('Functional Tests', function() {
             title: "Test Project",
           })
           .end(function(err, res){
-            assert.equal(res.type, 'application/json')
             assert.equal(res.body.title, "Test Project");
-            assert.equal(res.body.comments, []);
+            assert.property(res.body,'comments');
           
             done();
           })
@@ -95,9 +94,9 @@ suite('Functional Tests', function() {
       
       test('Test GET /api/books/[id] with id not in db',  function(done){
         chai.request(server)
-          .get('/api/books/azert1234')
+          .get('/api/books/azerty1234')
           .end(function(err, res){
-            assert.equal(res.text, 'bad bookid =>'+res.body.id);
+            assert.equal(res.text, 'bad bookid =>azerty1234');
        
             done();
           });
@@ -124,15 +123,15 @@ suite('Functional Tests', function() {
       
       test('Test POST /api/books/[id] with comment', function(done){
         chai.request(server)
-          .get('/api/books/:id')
+          .get('/api/books/5e8e30a797f7ee3af933b7be')
           .send({
-            id:parameter,
+            id:'5e8e30a797f7ee3af933b7be',
             comment:'test comment'
           })
           .end(function(err, res){
             assert.equal(res.type, 'application/json');
             assert.property(res.body, 'title');
-            assert.equal(res.body._id, parameter);
+            assert.equal(res.body._id, "5e8e30a797f7ee3af933b7be");
             assert.isAtLeast(res.body.comments.indexOf('test comment'), 0);
        
             done();
@@ -142,13 +141,13 @@ suite('Functional Tests', function() {
 
       test('Test POST /api/books/[id] with invalid id', function(done){
         chai.request(server)
-          .get('/api/books/:id')
+          .post('/api/books/id')
           .send({
-            id:parameter,
+            id:'id',
             comment:'test comment'
           })
           .end(function(err, res){
-            assert.equal(res.text, 'bad bookid =>'+res.body.id);
+            assert.equal(res.text, 'bad bookid =>id');
 
             done();
           });
